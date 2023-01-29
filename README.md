@@ -8,7 +8,7 @@ Make sure to have installed node.js at the version 16.13.1.
 
 Do the following steps:
 
-````sh
+```sh
 git clone https://github.com/Isynopoulos1/flitter.git
 cd flitter
 npm i
@@ -23,7 +23,7 @@ const config = {
 
 exports.config = config
 
-````
+```
 
 Ask me to share you the `URI_OF_DATABASE` of the atlas mongodb database or create a new one.
 Once this file is created with the correct `URI_OF_DATABASE` you can launch the application with
