@@ -12,7 +12,7 @@ Do the following steps:
 git clone https://github.com/Isynopoulos1/flitter.git
 cd flitter
 npm i
-´´´
+```
 
 Once you installed all the node_modules, create a file called `keys_local.js` within the ´config´ folder of the application with the following content:
 
