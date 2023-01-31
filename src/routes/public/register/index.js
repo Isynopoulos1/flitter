@@ -36,8 +36,6 @@ router.post("/api/register", async (req, res) => {
     date: user.date
   }
 
-  console.log(payload)
-
   req.session = {
     jwt: jwt.sign(payload, config.jwt_token)
   }
