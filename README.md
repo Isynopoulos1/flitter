@@ -33,7 +33,3 @@ npm run dev
 ```
 
 The application will run on the `localhost:5000` and if any issue occure such as already used port, make sure to disable airplay (for mac users) on the sharing configuration of the OS.
-
-## TESTING
-
-TODO

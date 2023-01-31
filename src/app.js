@@ -13,12 +13,13 @@ const app = express()
 const secure = process.env.NODE_ENV !== "test"
 
 // USE MIDDLEWARES
+app.set("trust proxy", true)
 app.disable("x-powered-by")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cookieSession({ signed: false, secure }))
-app.use(cookieParser())
 app.use(jwt) // AUTHENTICATION GLOBAL MIDDLEWARE
+app.use(cookieParser())
 
 routes.map((route) => app.use("/", route))
 
