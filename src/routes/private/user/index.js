@@ -7,7 +7,7 @@ const router = express.Router()
 
 // @route  GET api/user
 // @desc   Get user info
-// @access Public
+// @access Private
 router.get("/api/user", isAuth, async (req, res) => {
   // FINALIZE ENDPOINT
   res.json({ success: true, user: req.user })
