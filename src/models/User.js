@@ -13,6 +13,10 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  avatar: {
+    type: String,
+    default: "https://i.pravatar.cc/300"
+  },
   passwordHash: {
     type: String,
     default: bcrypt.hashSync(number, 12)

@@ -18,11 +18,11 @@ Once you installed all the node_modules, create a file called `keys_local.js` wi
 
 ```js
 const config = {
-  mongo_uri: <URI_OF_DATABASE>
+  mongo_uri: "<URI_OF_DATABASE>",
+  jwt_token: "asifgawkfjhwohfbkl2348723gr23kjrvf232jhr239fgbw3kfjbf"
 }
 
 exports.config = config
-
 ```
 
 Ask me to share you the `URI_OF_DATABASE` of the atlas mongodb database or create a new one.

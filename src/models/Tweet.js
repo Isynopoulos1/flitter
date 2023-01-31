@@ -11,6 +11,9 @@ const TweetSchema = new Schema({
     type: String,
     required: true
   },
+  tags: {
+    type: [String]
+  },
   likes: [
     {
       type: Schema.Types.ObjectId,
