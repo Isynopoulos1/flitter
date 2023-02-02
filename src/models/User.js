@@ -27,6 +27,12 @@ const UserSchema = new Schema({
       ref: "users"
     }
   ],
+  following: [
+    { 
+      type: Schema.Types.ObjectId, 
+      ref: "users" 
+    }
+  ],
   date: {
     type: Date,
     default: Date.now
@@ -37,6 +43,26 @@ const UserSchema = new Schema({
 UserSchema.methods.validPassword = function (password) {
   return bcrypt.compareSync(password, this.passwordHash)
 }
+
+UserSchema.methods.follow = function (userId) {
+  if (!this.following.some((id) => id.equals(userId))) {
+    this.following.push(userId);
+    return this.save();
+  }
+  return Promise.resolve(this);
+}
+  
+UserSchema.methods.unfollow = function (userId) {
+  if (this.following.some((id) => id.equals(userId))) {
+    this.following.remove(userId);
+    return this.save();
+  }
+  return Promise.resolve(this);
+}
+
+UserSchema.methods.isFollowing = function (userId) {
+  return this.following.some((id) => id.equals(userId));
+};
 
 UserSchema.virtual("password").set(function (value) {
   this.passwordHash = bcrypt.hashSync(value, 12)
