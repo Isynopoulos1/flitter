@@ -9,7 +9,9 @@ const TweetSchema = new Schema({
   },
   text: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    default: '',
   },
   tags: {
     type: [String]
@@ -20,10 +22,6 @@ const TweetSchema = new Schema({
       ref: "users"
     }
   ],
-  date: {
-    type: Date,
-    default: Date.now
-  }
-})
+}, { timestamps: true })
 
-module.exports = Tweet = mongoose.model("tweets", TweetSchema)
+module.exports = Tweet = mongoose.model("Tweet", TweetSchema)
