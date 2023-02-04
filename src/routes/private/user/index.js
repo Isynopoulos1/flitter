@@ -22,7 +22,7 @@ router.post("/api/user/:userId", isAuth, async (req, res) => {
   const { _id: authUserId } = req.user;
 
   if (userId === authUserId.toString()) {
-    throw new ErrorHandler(400, 'You cannot follow your own profile');
+    throw new ErrorHandler(400, 'No puedes seguir tu propio perfil');
   }
 
   const [authUserProfile, profileToFollow] = await Promise.all([
@@ -31,11 +31,11 @@ router.post("/api/user/:userId", isAuth, async (req, res) => {
   ]);
 
   if (!profileToFollow) {
-    throw new ErrorHandler(404, 'Profile does not exists');
+    throw new ErrorHandler(404, 'No existe este usuario');
   }
 
   if (authUserProfile.isFollowing(userId)) {
-    throw new ErrorHandler(400, 'You already follow that profile');
+    throw new ErrorHandler(400, 'Ya sigues a este usuario');
   }
 
   profileToFollow.followers.push(authUserId);
@@ -53,7 +53,7 @@ router.delete("/api/user/:userId", isAuth, async (req, res) => {
   const { _id: authUserId } = req.user;
 
   if (userId === authUserId.toString()) {
-    throw new ErrorHandler(400, 'You cannot unfollow your own profile');
+    throw new ErrorHandler(400, 'No puedes dejar de seguir tu propio perfil');
   }
 
   const [authUserProfile, profileToFollow] = await Promise.all([
@@ -62,11 +62,11 @@ router.delete("/api/user/:userId", isAuth, async (req, res) => {
   ]);
 
   if (!profileToFollow) {
-    throw new ErrorHandler(404, 'Profile does not exists');
+    throw new ErrorHandler(404, 'No existe este usuario');
   }
 
   if (!authUserProfile.isFollowing(userId)) {
-    throw new ErrorHandler(400, 'You do not follow that profile');
+    throw new ErrorHandler(400, 'No puedes dejar de seguir a un usuario al que no sigues');
   }
 
   profileToFollow.followers.remove(authUserId);
