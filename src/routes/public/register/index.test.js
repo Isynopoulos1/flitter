@@ -1,7 +1,8 @@
+const { it } = require("node:test")
 const request = require("supertest")
 const app = require("../../../app")
 
-it("return 201 when new user register", async () => {
+test("return 201 when new user register", async () => {
   const user = global.generateUser()
   const { body } = await request(app).post("/api/register").send(user).expect(201)
 
@@ -9,7 +10,7 @@ it("return 201 when new user register", async () => {
   expect(body.token[0]).toEqual("express:sess")
 })
 
-it("return 400 when try register a user with an email that already exist", async () => {
+test("return 400 when try register a user with an email that already exist", async () => {
   const user = global.generateUser()
   await request(app).post("/api/register").send(user).expect(201)
   const { body } = await request(app).post("/api/register").send(user).expect(400)
@@ -17,7 +18,19 @@ it("return 400 when try register a user with an email that already exist", async
   expect(body.error).toEqual("Email already exist")
 })
 
-it("return 400 when try register a user and missing or incorrect required fields", async () => {
+
+test("return 400 when try register a user and name already exist", async() => {
+  const user1 = global.generateUser()
+  const user2 = { ...global.generateUser(), name: user1.name}
+
+  await request(app).post("/api/register").send(user1).expect(201)
+   
+  const { body } = await request(app).post("/api/register").send(user2).expect(400)
+
+  expect(body.error).toEqual("Name already exist")
+})
+
+test("return 400 when try register a user and missing or incorrect required fields", async () => {
   const user1 = { ...global.generateUser(), email: "" }
   const user2 = { ...global.generateUser(), email: "asdasdas" }
   const user3 = { ...global.generateUser(), password2: "asdaasdasdsdas" }
