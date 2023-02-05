@@ -1,4 +1,3 @@
-const { it } = require("node:test")
 const request = require("supertest")
 const app = require("../../../app")
 

@@ -14,40 +14,6 @@ router.get("/api/user", isAuth, async (req, res) => {
   res.json({ success: true, user: req.user })
 })
 
-// @route  POST api/user/:userId
-// @desc   Follow a user
-// @access Private
-router.post("/api/user/:userId", isAuth, async (req, res) => {
-  const userId = req.params.userId;
-  // req.user??? Comprobar contenido
-  const { _id: authUserId } = req.user;
-  let authUserProfile, profileToFollow
-  if (userId === authUserId.toString()) {
-    return res.status(400).json({ error:'No puedes seguir tu propio perfil' })
-  }
-
-  try {
-    authUserProfile=  await User.findOne({ user: authUserId });
-    profileToFollow =  await User.findOne({ user: userId });
-  } catch (error) {
-    return res.status(500).json({ error: 'something wrong happen' })
-  }
-
-
-  if (!profileToFollow) {
-    throw new ErrorHandler(404, 'No existe este usuario');
-  }
-
-  if (authUserProfile.isFollowing(userId)) {
-    throw new ErrorHandler(400, 'Ya sigues a este usuario');
-  }
-
-  profileToFollow.followers.push(authUserId);
-
-  await Promise.all([authUserProfile.follow(userId), profileToFollow.save()]);
-
-  return res.json({ profile: authUserProfile });
-})
 
 // @route  PUT api/user/follow/:userId
 // @desc   unfollow a user
@@ -63,7 +29,6 @@ router.put("/api/user/follow/:userId", isAuth, async (req, res)=> {
     return res.status(400).json({ error:'No puedes seguir tu propio perfil' })
   }
 
-  // FOLLOW OR UNFOLLOW
   try {
     authUserProfile =  await User.findOne({ _id: authUserId });
     profileToFollow =  await User.findOne({ _id: userId });
@@ -71,39 +36,29 @@ router.put("/api/user/follow/:userId", isAuth, async (req, res)=> {
     return res.status(500).json({ error: 'something wrong happen' })
   }
 
+  if (!authUserProfile ||  !profileToFollow) {
+    return res.status(500).json({ error: 'user doesnt exist' })
+  }
 
+
+  // FOLLOW OR UNFOLLOW
+  const indexOfUser = profileToFollow.followers.findIndex(f => f.toString() === authUserId);
+  indexOfUser === -1
+    ? profileToFollow.followers.unshift(authUserId)
+    : profileToFollow.followers.splice(indexOfUser, 1);
+
+  const indexOfUser2 = authUserProfile.following.findIndex(f => f.toString() === userId);
+  indexOfUser2 === -1
+    ? authUserProfile.following.unshift(userId)
+    : authUserProfile.following.splice(indexOfUser2, 1);
+
+  await profileToFollow.save()
+  await authUserProfile.save()
+
+  return res.status(200).json({ success: true})
 
 })
 
-// @route  DELETE api/user/:userId
-// @desc   unfollow a user
-// @access Private
-router.delete("/api/user/:userId", isAuth, async (req, res) => {
-  const userId = req.params.userId;
-  const { _id: authUserId } = req.user;
 
-  if (userId === authUserId.toString()) {
-    throw new ErrorHandler(400, 'No puedes dejar de seguir tu propio perfil');
-  }
-
-  const [authUserProfile, profileToFollow] = await Promise.all([
-    User.findOne({ user: authUserId }),
-    User.findOne({ user: userId }),
-  ]);
-
-  if (!profileToFollow) {
-    throw new ErrorHandler(404, 'No existe este usuario');
-  }
-
-  if (!authUserProfile.isFollowing(userId)) {
-    throw new ErrorHandler(400, 'No puedes dejar de seguir a un usuario al que no sigues');
-  }
-
-  profileToFollow.followers.remove(authUserId);
-
-  await Promise.all([authUserProfile.unfollow(userId), profileToFollow.save()]);
-
-  return res.json({ profile: authUserProfile });
-})
 
 module.exports = router
