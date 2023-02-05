@@ -19,19 +19,23 @@ router.post("/api/register", async (req, res) => {
 
   // EXTRACT DATA
   const { name, email, password } = req.body
-  const userFields = { name, email, password }
+  const userFields = { name: name.toLowerCase(), email: email.toLowerCase(), password }
 
   // CHECK IF EMAIL ALREADY EXIST
-  const existingUser = await User.findOne({ email: email.toLowerCase() })
-  if (existingUser) return res.status(400).json({ error: "Email already exist" })
+  const existingEmail = await User.findOne({ email: email.toLowerCase() })
+  if (existingEmail) return res.status(400).json({ error: "Email already exist" })
+
+  // CHECK IF EMAIL ALREADY EXIST
+  const existingName = await User.findOne({ name: name.toLowerCase() })
+  if (existingName) return res.status(400).json({ error: "Name already exist" })
 
   // SAVE USER TO DATABASE
   const user = await new User(userFields).save()
 
   const payload = {
     _id: user._id,
-    name: user.name,
-    email: user.email,
+    name: user.name.toLowerCase(),
+    email: user.email.toLowerCase(),
     followers: user.followers,
     date: user.date
   }
