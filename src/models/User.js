@@ -27,6 +27,12 @@ const UserSchema = new Schema({
       ref: "users"
     }
   ],
+  following: [
+    { 
+      type: Schema.Types.ObjectId, 
+      ref: "users" 
+    }
+  ],
   date: {
     type: Date,
     default: Date.now
@@ -48,4 +54,17 @@ UserSchema.options.toJSON = {
   }
 }
 
-module.exports = User = mongoose.model("user", UserSchema)
+// STATIC METHOD TO LOGIN USER
+UserSchema.statics.login = async function(name, password) {
+  const user = await this.findOne({ name })
+  if (user) {
+    const auth = await bcrypt.compare(password, user.passwordHash)
+    if (auth) {
+      return user
+    }
+    throw Error ('incorrect password')
+  }
+  throw Error ('incorrect username')
+}
+
+module.exports = User = mongoose.model("users", UserSchema)
