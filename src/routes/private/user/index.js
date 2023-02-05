@@ -13,22 +13,25 @@ router.get("/api/user", isAuth, async (req, res) => {
   res.json({ success: true, user: req.user })
 })
 
-// @route  POST api/tweet
+// @route  POST api/user/:userId
 // @desc   Follow a user
 // @access Private
 router.post("/api/user/:userId", isAuth, async (req, res) => {
   const userId = req.params.userId;
   // req.user??? Comprobar contenido
   const { _id: authUserId } = req.user;
-
+  let authUserProfile, profileToFollow
   if (userId === authUserId.toString()) {
-    throw new ErrorHandler(400, 'No puedes seguir tu propio perfil');
+    return res.status(400).json({ error:'No puedes seguir tu propio perfil' })
   }
 
-  const [authUserProfile, profileToFollow] = await Promise.all([
-    User.findOne({ user: authUserId }),
-    User.findOne({ user: userId }),
-  ]);
+  try {
+    authUserProfile=  await User.findOne({ user: authUserId });
+    profileToFollow =  await User.findOne({ user: userId });
+  } catch (error) {
+    return res.status(500).json({ error: 'something wrong happen' })
+  }
+
 
   if (!profileToFollow) {
     throw new ErrorHandler(404, 'No existe este usuario');
@@ -45,7 +48,33 @@ router.post("/api/user/:userId", isAuth, async (req, res) => {
   return res.json({ profile: authUserProfile });
 })
 
-// @route  DELETE api/tweet
+// @route  PUT api/user/follow/:userId
+// @desc   unfollow a user
+// @access Private
+router.put("/api/user/follow/:userId", isAuth, async (req, res)=> {
+  // DEFINE VARIABLES
+  const { userId } = req.params;
+  const { _id: authUserId } = req.user;
+  let authUserProfile, profileToFollow
+
+  // CHECK IF USERS EXIST
+  if (userId === authUserId.toString()) {
+    return res.status(400).json({ error:'No puedes seguir tu propio perfil' })
+  }
+
+  // FOLLOW OR UNFOLLOW
+  try {
+    authUserProfile =  await User.findOne({ _id: authUserId });
+    profileToFollow =  await User.findOne({ _id: userId });
+  } catch (error) {
+    return res.status(500).json({ error: 'something wrong happen' })
+  }
+
+
+
+})
+
+// @route  DELETE api/user/:userId
 // @desc   unfollow a user
 // @access Private
 router.delete("/api/user/:userId", isAuth, async (req, res) => {
