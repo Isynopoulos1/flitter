@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const { Schema } = mongoose
 
 const TweetSchema = new Schema({
-  _author: {
+  postedBy: {
     type: Schema.Types.ObjectId,
     ref: "users",
     required: true
