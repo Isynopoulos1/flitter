@@ -2,6 +2,7 @@ const express = require("express")
 const User = require('../../../models/User');
 const isAuth = require("../../../middlewares/isAuth")
 
+
 // DECLARE ROUTER
 const router = express.Router()
 
