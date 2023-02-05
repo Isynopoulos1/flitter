@@ -15,14 +15,17 @@ test('return 200 on following user', async() =>{
     // BUILD OBJECT AND BASE 6$ ENCRYPT
 
     // FOLLOW
-    const { body } = await request(app).put(`/api/user/follow/${profile.data._id}`).set("Cookie", [`${cookie.token[0]}=${cookie.token[1]}`]).expect(200)
+    //const { body } = await request(app).put(`/api/user/follow/${profile.data._id}`).set("Cookie", [`${cookie.token[0]}=${cookie.token[1]}`]).expect(200)
+    const { body } = await request(app).put(`/api/user/follow/${profile.data.name.toLowerCase()}`).set("Cookie", [`${cookie.token[0]}=${cookie.token[1]}`]).expect(200)
     expect(body.success).toEqual(true)
 
     const users = await User.findOne()
     // TODO CONTINU TEST
 
     // UNFOLLOW
-    await request(app).put(`/api/user/follow/${profile.data._id}`).set("Cookie", [`${cookie.token[0]}=${cookie.token[1]}`]).expect(200)
+    //await request(app).put(`/api/user/follow/${profile.data._id}`).set("Cookie", [`${cookie.token[0]}=${cookie.token[1]}`]).expect(200)
+    await request(app).put(`/api/user/follow/${profile.data.name.toLowerCase()}`).set("Cookie", [`${cookie.token[0]}=${cookie.token[1]}`]).expect(200)
+
     const users2 = await User.find()
     // TODO CONTINU TEST
 })
