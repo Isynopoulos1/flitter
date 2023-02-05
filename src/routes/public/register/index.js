@@ -41,7 +41,7 @@ router.post("/api/register", async (req, res) => {
   }
 
   // FINALIZE ENDPOINT
-  res.status(201).json({ success: true, token: "Bearer " + req.session.jwt })
+  res.status(201).json({ success: true, token: ["express:sess", `${Buffer.from(JSON.stringify(req.session)).toString("base64")}`] })
 })
 
 module.exports = router
