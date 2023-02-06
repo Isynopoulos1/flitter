@@ -5,15 +5,66 @@ const Tweet = require("../../../models/Tweet")
 // DECLARE ROUTER
 const router = express.Router()
 
-// @route  GET api/tweet
-// @desc   Get all tweets sort cronologically limit to 20 tweets.
+// @route  GET api/tweet?page=PAGE&limit=LIMIT&search=SEARCH&tag=TAG&sort=SORT
+// @desc   Get list of tweets.
 // @access Public
-router.get("/api/tweets", async (req, res) => {
+router.get("/api/tweet", async (req, res) => {
+  // DEFINE VARIABLES
+  const { page, limit, search, tag, sort } = req.query
+
+  // ENSURE MIN QUERY ARE DEFINED
+  if (!Number.isInteger(parseInt(page)) || !Number.isInteger(parseInt(limit))) {
+    return res.status(400).json({ error: "limit or page query cannot be empty" })
+  }
+
+  // DEFINE AGGREGATION PIPELINE
+  const aggregatePipelines = [
+    {
+      $match: {
+        tags: !tag ? { $ne: [tag] } : { $in: [tag] },
+        text: !search ? { $ne: [search] } : { $regex: new RegExp(search, "i") }
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "postedBy",
+        foreignField: "_id",
+        as: "postedBy"
+      }
+    },
+    { $unwind: "$postedBy" },
+    {
+      $project: {
+        _id: true,
+        postedBy: {
+          _id: true,
+          name: true,
+          avatar: true
+        },
+        tags: true,
+        text: true,
+        likes: true,
+        timestamps: true
+      }
+    },
+    {
+      $facet: {
+        tweets: [{ $skip: Number(page) * Number(limit) }, { $limit: Number(limit) }],
+        total: [{ $count: "count" }]
+      }
+    }
+  ]
+
   try {
-    const tweets = await Tweet.find().limit(20).sort({ date: -1 })
-    res.json(tweets)
-  } catch (err) {
-    res.status(500).json({ message: error.message })
+    // START TRANSACTION
+    const tweets = await Tweet.aggregate(aggregatePipelines)
+
+    // RETURN RESULT
+    res.status(200).json(tweets)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: `something unexpected happen, ${e}` })
   }
 })
 

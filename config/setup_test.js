@@ -23,6 +23,15 @@ global.generateUser = () => {
   }
 }
 
+// GLOBAL MOCK FRONTEND DATA
+global.generateTweet = () => {
+  const password = faker.internet.password()
+  return {
+    tags: [faker.lorem.word(), faker.lorem.word(), faker.lorem.word()],
+    text: faker.lorem.words(10)
+  }
+}
+
 // GLOBAL SCOPE
 global.register = async (user) => {
   const { body } = await request(app).post("/api/register").send(user).expect(201)

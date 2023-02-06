@@ -15,7 +15,7 @@ router.post("/api/create-tweet", isAuth, async (req, res) => {
   const { errors, isValid } = inputValidator(req.body)
   if (!isValid) return res.status(400).json(errors)
 
-  // TODO GET AND EXTRACT VARIABLES
+  // GET AND EXTRACT VARIABLES
   const { text, tags } = req.body
 
   const tweet = await new Tweet({
@@ -76,7 +76,9 @@ router.delete("/api/delete-tweet/:tweetId", isAuth, async (req, res) => {
   }
 })
 
-// Like a Tweet
+// @route  PATCH api/tweet/:id/like
+// @desc   Like a tweet as a user
+// @access Private
 router.patch("/tweet/:id/like", isAuth, async (req, res) => {
   try {
     const tweet = await Tweet.findById(req.params.id)
@@ -92,7 +94,9 @@ router.patch("/tweet/:id/like", isAuth, async (req, res) => {
   }
 })
 
-// Remove a Like from a Tweet
+// @route  PATCH api/tweet/:id/unlike
+// @desc   Unlike a tweet as a user
+// @access Private
 router.patch("/tweet/:id/unlike", isAuth, async (req, res) => {
   try {
     const tweet = await Tweet.findById(req.params.id)
