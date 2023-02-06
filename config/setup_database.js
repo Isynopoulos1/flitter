@@ -6,6 +6,7 @@ let mongo
 module.exports.connect = async () => {
   mongo = await MongoMemoryServer.create()
   const mongoUri = await mongo.getUri()
+  await mongoose.set("strictQuery", false)
   await mongoose.connect(mongoUri)
 }
 

@@ -1,10 +1,21 @@
-const register = require("./public/register")
-const login = require("./public/login")
-const logout = require("./public/logout")  
-const userPublic = require("./public/user")  
-const user = require("./private/user")
-const createTweet = require('./private/tweet')
-const getTweet = require('./public/tweet')
+// PUBLIC
+const public_register = require("./public/register")
+const public_login = require("./public/login")
 
+// PRIVATE
+const public_user = require("./public/user")
+const private_user = require("./private/user")
+const private_tweet = require("./private/tweet")
+const public_tweet = require("./public/tweet")
 
-module.exports = routes = [register, user, userPublic, createTweet, getTweet, login, logout]
+module.exports = routes = [
+  // PUBLIC
+  public_register,
+  public_login,
+  public_user,
+  public_tweet,
+  public_login,
+  // PRIVATE
+  private_user,
+  private_tweet
+]

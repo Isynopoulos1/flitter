@@ -17,13 +17,12 @@ test("return 400 when try register a user with an email that already exist", asy
   expect(body.error).toEqual("Email already exist")
 })
 
-
-test("return 400 when try register a user and name already exist", async() => {
+test("return 400 when try register a user and name already exist", async () => {
   const user1 = global.generateUser()
-  const user2 = { ...global.generateUser(), name: user1.name}
+  const user2 = { ...global.generateUser(), name: user1.name }
 
   await request(app).post("/api/register").send(user1).expect(201)
-   
+
   const { body } = await request(app).post("/api/register").send(user2).expect(400)
 
   expect(body.error).toEqual("Name already exist")

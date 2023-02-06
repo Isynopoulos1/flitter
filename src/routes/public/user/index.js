@@ -1,5 +1,5 @@
 const express = require("express")
-const User = require('../../../models/User');
+const User = require("../../../models/User")
 
 // DECLARE ROUTER
 const router = express.Router()
@@ -8,7 +8,7 @@ const router = express.Router()
 // @desc   Get all users
 // @access Public
 router.get("/api/users", async (req, res) => {
-  const users =  await User.find();
+  const users = await User.find()
   return res.status(200).json({ users })
 })
 
@@ -16,8 +16,8 @@ router.get("/api/users", async (req, res) => {
 // @desc   Get user profile info
 // @access Public
 router.get("/api/user/:name", async (req, res) => {
-  const { name } = req.params;
-  const user =  await User.findOne({ name: name });
+  const { name } = req.params
+  const user = await User.findOne({ name: name })
   return res.status(200).json({ user })
 })
 

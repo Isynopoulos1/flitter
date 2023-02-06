@@ -23,12 +23,10 @@ global.generateUser = () => {
   }
 }
 
-
 // GLOBAL SCOPE
-global.register =async (user) => {
+global.register = async (user) => {
   const { body } = await request(app).post("/api/register").send(user).expect(201)
 
   // BUILD OBJECT AND BASE 6$ ENCRYPT
   return [`${body.token[0]}=${body.token[1]}`]
 }
-
