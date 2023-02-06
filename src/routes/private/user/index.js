@@ -2,21 +2,17 @@ const express = require("express")
 const User = require('../../../models/User');
 const isAuth = require("../../../middlewares/isAuth")
 
-
 // DECLARE ROUTER
 const router = express.Router()
 
-
-
-// @route  GET api/user/:nickname
-// @desc   Get user profile info
-// @access Private
-router.get("/api/user/:name", isAuth, async (req, res) => {
-  const { name } = req.params;
-  const user =  await User.findOne({ name: name });
-  return res.status(200).json({ user })
-})
-
+// // @route  GET api/user/:name
+// // @desc   Get user profile info
+// // @access Private
+// router.get("/api/user/:name", isAuth, async (req, res) => {
+//   const { name } = req.params;
+//   const user =  await User.findOne({ name: name });
+//   return res.status(200).json({ user })
+// })
 
 // @route  PUT api/user/follow/:userId
 // @desc   unfollow a user
