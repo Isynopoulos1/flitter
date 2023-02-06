@@ -45,8 +45,21 @@ router.get("/api/tweet", async (req, res) => {
         tags: true,
         text: true,
         likes: true,
-        timestamps: true
+        createdAt: true,
+        updatedAt: true
       }
+    },
+    {
+      $sort:
+        sort === "ALPHABETICAL"
+          ? {
+              text: 1
+            }
+          : sort === "TIMESTAMP"
+          ? {
+              createdAt: -1
+            }
+          : { createdAt: 1 }
     },
     {
       $facet: {
