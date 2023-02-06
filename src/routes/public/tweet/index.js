@@ -50,16 +50,7 @@ router.get("/api/tweet", async (req, res) => {
       }
     },
     {
-      $sort:
-        sort === "ALPHABETICAL"
-          ? {
-              text: 1
-            }
-          : sort === "TIMESTAMP"
-          ? {
-              createdAt: -1
-            }
-          : { createdAt: 1 }
+      $sort: sort === "ALPHA" ? { text: 1 } : sort === "ZETA" ? { text: -1 } : sort === "LAST" ? { createdAt: 1 } : { createdAt: -1 }
     },
     {
       $facet: {
