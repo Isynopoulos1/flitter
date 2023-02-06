@@ -78,20 +78,41 @@ router.delete("/api/delete-tweet/:tweetId", isAuth, async (req, res) => {
   }
 })
 
-//@route POST api/tweet/:id/act
-//@desc like and unlike action
-//@access Private
-//NEEDS TEST!
-router.put("/api/like/:tweetId", isAuth, async (req, res) => {
-  const filter = req.params.tweetId
-  const update = {
-    likes: req.user._id
+// Like a Tweet
+router.patch('/tweet/:id/like', isAuth, async (req, res) => {
+  try {
+    const tweet = await Tweet.findById(req.params.id);
+    if (!tweet) {
+      return res.status(404).send('No tweet found with that ID');
+    }
+    const { _id: authUserId } = req.user;
+    tweet.likes.push(authUserId);
+    await tweet.save();
+    res.send('Tweet liked successfully');
+  } catch (err) {
+    res.status(400).send(err);
   }
+});
 
-  let tweet = await Tweet.findOneAndUpdate(filter, update, {
-    new: true
-  })
-  res.json(tweet)
-})
+// Remove a Like from a Tweet
+router.patch('/tweet/:id/unlike', isAuth, async (req, res) => {
+  try {
+    const tweet = await Tweet.findById(req.params.id);
+    if (!tweet) {
+      return res.status(404).send('No tweet found with that ID');
+    }
+    const { _id: authUserId } = req.user;
+    const index = tweet.likes.indexOf(authUserId);
+    if (index === -1) {
+      return res.status(404).send('Like not found');
+    }
+    tweet.likes.splice(index, 1);
+    await tweet.save();
+    res.send('Like removed successfully');
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
 
 module.exports = router
