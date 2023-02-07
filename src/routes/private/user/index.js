@@ -5,6 +5,23 @@ const isAuth = require("../../../middlewares/isAuth")
 // DECLARE ROUTER
 const router = express.Router()
 
+// @route  DELETE api/user
+// @desc   delete own account
+// @access Private
+router.delete("/api/user", isAuth, async (req, res) => {
+  // VARIABLES
+  const { _id: userId } = req.user
+
+  // TRANSACTION
+  try {
+    await User.findOneAndDelete({ _id: userId })
+    res.status(202).json({ success: true })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: `something unexpected happen, ${e}` })
+  }
+})
+
 // @route  PUT api/user/follow/:userId
 // @desc   unfollow a user
 // @access Private

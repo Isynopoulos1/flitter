@@ -1,6 +1,7 @@
 const express = require("express")
-
+const mongoose = require("mongoose")
 const Tweet = require("../../../models/Tweet")
+const User = require("../../../models/User")
 
 // DECLARE ROUTER
 const router = express.Router()
@@ -65,6 +66,67 @@ router.get("/api/tweet", async (req, res) => {
     const tweets = await Tweet.aggregate(aggregatePipelines)
 
     // RETURN RESULT
+    res.status(200).json(tweets)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: `something unexpected happen, ${e}` })
+  }
+})
+
+// @route  GET api/tweet/:tweetId
+// @desc   Get on tweet per ID
+// @access Public
+router.get("/api/tweet/:tweetId", async (req, res) => {
+  // VARIABLES
+  const { tweetId } = req.params
+
+  try {
+    const tweet = await Tweet.findOne({ _id: tweetId }).populate("postedBy", ["_id", "name", "avatar"])
+    return res.status(200).json(tweet)
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: `something unexpected happen, ${e}` })
+  }
+})
+
+// @route  PATCH api/tweet/:id/unlike
+// @desc   Unlike a tweet as a user
+// @access Private
+router.get("/api/tweet/user/:userId", async (req, res) => {
+  // VARIABLES
+  const { userId } = req.params
+  const { ObjectId } = mongoose.Types
+
+  // DEFINE AGGREGATION PIPELINE
+  const aggregatePipelines = [
+    {
+      $match: {
+        _id: ObjectId(userId)
+      }
+    },
+    {
+      $lookup: {
+        from: "tweets",
+        localField: "_id",
+        foreignField: "postedBy",
+        as: "tweets"
+      }
+    },
+    {
+      $project: {
+        _id: true,
+        _id: true,
+        name: true,
+        avatar: true,
+        tweets: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    }
+  ]
+
+  try {
+    const tweets = await User.aggregate(aggregatePipelines)
     res.status(200).json(tweets)
   } catch (e) {
     console.error(e)
