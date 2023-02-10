@@ -1,56 +1,56 @@
 const express = require("express")
 const jwt = require("jsonwebtoken")
+const bcrypt = require("bcryptjs")
 
 // // IMPORT UTILS && MODELS
 const User = require("../../../models/User")
+const inputValidator = require("../../../validation/login")
 const { config } = require("../../../../config")
 
 // DECLARE ROUTER
 const router = express.Router()
 
-// HANDLE ERRORS
-const handleErrors = (err) => {
-  console.log(err.message, err.code)
-  let errors = { name: "", password: "" }
-
-  //INCORRECT EMAIL
-  if (err.message === "incorrect username") {
-    errors.name = "that username is not registered"
-  }
-
-  //INCORRECT PASSWORD
-  if (err.message === "incorrect password") {
-    errors.password = "that password is incorrect"
-  }
-  return errors
-}
-
-// @route  POST api/login
-// @desc   Login API main function
-// @access Public
-const maxAge = 3 * 24 * 60 * 60
-const createToken = (id) => {
-  return jwt.sign({ id }, config.jwt_token, {
-    expiresIn: maxAge
-  })
-}
-
 router.post("/api/login", async (req, res) => {
-  // GRABBING THE REQUEST BODY
-  const { name, password } = req.body
-  console.log(req.body)
+  // HANDLE BODY VALIDATION
+  const { errors, isValid } = inputValidator(req.body)
+  if (!isValid) return res.status(400).json(errors)
 
-  try {
-    const user = await User.login(name, password)
-    const token = createToken(user._id)
-    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 })
-    res.status(200).json({ user: user._id })
-  } catch (err) {
-    const errors = handleErrors(err)
-    res.status(400).json({ errors })
+  // EXTRACT DATA
+  const { name, password } = req.body
+
+  // HANDLE EXISTING USER
+  const user = await User.findOne({ name: name?.toLowerCase() })
+  if (!user) return res.status(400).json({ error: "Invalid credentials" })
+
+  // CHECK MATCH
+  const match = await bcrypt.compareSync(password, user.passwordHash)
+
+  if (match) {
+    try {
+      // CHECK IF EMAIL ALREADY EXIST
+      const payload = {
+        _id: user._id,
+        name: user.name.toLowerCase(),
+        email: user.email.toLowerCase(),
+        followers: user.followers,
+        date: user.date
+      }
+
+      req.session = {
+        jwt: jwt.sign(payload, config.jwt_token)
+      }
+
+      // FINALIZE ENDPOINT
+      res
+        .status(201)
+        .json({ success: true, token: ["express:sess", `${Buffer.from(JSON.stringify(req.session)).toString("base64")}`], data: payload })
+    } catch (err) {
+      const errors = handleErrors(err)
+      res.status(400).json({ errors })
+    }
+  } else {
+    return res.status(400).json({ error: "Invalid credentials" })
   }
-  // console.log(email, password)
-  // res.send('user login')
 })
 
 module.exports = router
