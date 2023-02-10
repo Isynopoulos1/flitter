@@ -5,6 +5,23 @@ const isAuth = require("../../../middlewares/isAuth")
 // DECLARE ROUTER
 const router = express.Router()
 
+// @route  GET api/user
+// @desc   get own account data
+// @access Private
+router.get("/api/user", isAuth, async (req, res) => {
+  // VARIABLES
+  const { _id: userId } = req.user
+
+  // TRANSACTION
+  try {
+    const user = await User.findOne({ _id: userId }).select("-passwordHash")
+    return res.status(200).json({ user })
+  } catch (e) {
+    console.error(e)
+    res.status(500).json({ error: `something unexpected happen, ${e}` })
+  }
+})
+
 // @route  DELETE api/user
 // @desc   delete own account
 // @access Private
