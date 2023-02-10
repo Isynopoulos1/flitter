@@ -32,6 +32,7 @@ router.post("/api/login", async (req, res) => {
         _id: user._id,
         name: user.name.toLowerCase(),
         email: user.email.toLowerCase(),
+        avatar: user.avatar,
         followers: user.followers,
         date: user.date
       }

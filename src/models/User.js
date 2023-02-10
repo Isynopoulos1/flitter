@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const bcrypt = require("bcryptjs")
+const { faker } = require("@faker-js/faker")
 
 const { Schema } = mongoose
 const number = Math.random().toString()
@@ -15,7 +16,7 @@ const UserSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: "https://i.pravatar.cc/300"
+    default: faker.internet.avatar()
   },
   passwordHash: {
     type: String,

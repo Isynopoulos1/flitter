@@ -35,6 +35,7 @@ router.post("/api/register", async (req, res) => {
   const payload = {
     _id: user._id,
     name: user.name.toLowerCase(),
+    avatar: user.avatar,
     email: user.email.toLowerCase(),
     followers: user.followers,
     date: user.date

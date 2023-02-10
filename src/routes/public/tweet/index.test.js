@@ -50,6 +50,4 @@ test("return 200 on searching tweets", async () => {
 
   const isMatch = body[0].tweets.map((tweet) => tweet.text.includes(searchableWord))
   expect(isMatch).toBeTruthy()
-
-  console.log(body[0].tweets)
 })
