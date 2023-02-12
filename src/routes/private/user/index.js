@@ -52,7 +52,7 @@ router.put("/api/user/follow/:name", isAuth, async (req, res) => {
   let authUserProfile, profileToFollow
 
   // CHECK IF USERS EXIST
-  if (userId === authUserId.toString()) {
+  if (userId.toString() === authUserId.toString()) {
     return res.status(400).json({ error: "No puedes seguir tu propio perfil" })
   }
 
@@ -60,11 +60,11 @@ router.put("/api/user/follow/:name", isAuth, async (req, res) => {
     authUserProfile = await User.findOne({ _id: authUserId })
     profileToFollow = await User.findOne({ _id: userId })
   } catch (error) {
-    return res.status(500).json({ error: "something wrong happen" })
+    return res.status(400).json({ error: "something wrong happen" })
   }
 
   if (!authUserProfile || !profileToFollow) {
-    return res.status(500).json({ error: "user doesnt exist" })
+    return res.status(400).json({ error: "user doesnt exist" })
   }
 
   // FOLLOW OR UNFOLLOW
