@@ -44,8 +44,7 @@ router.delete("/api/user", isAuth, async (req, res) => {
 // @access Private
 router.put("/api/user/follow/:name", isAuth, async (req, res) => {
   // DEFINE VARIABLES
-  //const { userId } = req.params; //no sería userId sino nickname
-  const { name } = req.params //no sería userId sino nickname
+  const { name } = req.params
   const { _id: userId } = await User.findOne({ name: name.toLowerCase() })
 
   //buscar id del nickname del parámetro
@@ -69,10 +68,10 @@ router.put("/api/user/follow/:name", isAuth, async (req, res) => {
   }
 
   // FOLLOW OR UNFOLLOW
-  const indexOfUser = profileToFollow.followers.findIndex((f) => f.toString() === authUserId)
+  const indexOfUser = profileToFollow.followers.findIndex((f) => f.toString() === authUserId.toString())
   indexOfUser === -1 ? profileToFollow.followers.unshift(authUserId) : profileToFollow.followers.splice(indexOfUser, 1)
 
-  const indexOfUser2 = authUserProfile.following.findIndex((f) => f.toString() === userId)
+  const indexOfUser2 = authUserProfile.following.findIndex((f) => f.toString() === userId.toString())
   indexOfUser2 === -1 ? authUserProfile.following.unshift(userId) : authUserProfile.following.splice(indexOfUser2, 1)
 
   await profileToFollow.save()
