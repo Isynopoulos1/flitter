@@ -29,9 +29,9 @@ npm run dev
 
 - [Mongo DB Atlas](https://www.mongodb.com/es/atlas/database)
 - [Node JS](https://nodejs.org)
-- [Express] (https://todo.org)
-- [Jwt] (https://todo.org)
-- [Jest] (https://todo.org)
+- [Express] (https://expressjs.com)
+- [Jwt] (https://jwt.io)
+- [Jest] (https://jestjs.io)
 
 ## Authors
 
