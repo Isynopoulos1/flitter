@@ -93,7 +93,7 @@ router.patch("/api/tweet/:id/like", isAuth, async (req, res) => {
     indexOfUser === -1 ? tweet.likes.unshift(userId) : tweet.likes.splice(indexOfUser, 1)
 
     await tweet.save()
-    res.send("Tweet liked successfully")
+    return res.status(200).json(tweet)
   } catch (err) {
     res.status(400).send(err)
   }
