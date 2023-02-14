@@ -77,40 +77,23 @@ router.delete("/api/delete-tweet/:tweetId", isAuth, async (req, res) => {
 })
 
 // @route  PATCH api/tweet/:id/like
-// @desc   Like a tweet as a user
+// @desc   Like or Unlike tweet as a user
 // @access Private
-router.patch("/tweet/:id/like", isAuth, async (req, res) => {
+router.patch("/api/tweet/:id/like", isAuth, async (req, res) => {
   try {
-    const tweet = await Tweet.findById(req.params.id)
-    if (!tweet) {
-      return res.status(404).send("No tweet found with that ID")
-    }
-    const { _id: authUserId } = req.user
-    tweet.likes.push(authUserId)
+    // DEFINE VARIABLES
+    const { id } = req.params
+    const { _id: userId } = req.user
+
+    const tweet = await Tweet.findById(id)
+    if (!tweet) return res.status(404).send("No tweet found with that ID")
+
+    // FOLLOW OR UNFOLLOW
+    const indexOfUser = tweet.likes.findIndex((f) => f.toString() === userId.toString())
+    indexOfUser === -1 ? tweet.likes.unshift(userId) : tweet.likes.splice(indexOfUser, 1)
+
     await tweet.save()
     res.send("Tweet liked successfully")
-  } catch (err) {
-    res.status(400).send(err)
-  }
-})
-
-// @route  PATCH api/tweet/:id/unlike
-// @desc   Unlike a tweet as a user
-// @access Private
-router.patch("/tweet/:id/unlike", isAuth, async (req, res) => {
-  try {
-    const tweet = await Tweet.findById(req.params.id)
-    if (!tweet) {
-      return res.status(404).send("No tweet found with that ID")
-    }
-    const { _id: authUserId } = req.user
-    const index = tweet.likes.indexOf(authUserId)
-    if (index === -1) {
-      return res.status(404).send("Like not found")
-    }
-    tweet.likes.splice(index, 1)
-    await tweet.save()
-    res.send("Like removed successfully")
   } catch (err) {
     res.status(400).send(err)
   }
