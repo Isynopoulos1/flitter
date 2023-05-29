@@ -5,7 +5,7 @@ in a public or private way.
 
 The objective of this project has been to put into practice everything learned during the bootcamp, simulating a real situation: development of a project using iterations, making architectural decisions with a deadline for delivery.
 
-This repository provides a backend API that interacts with a user interface that you will also find visiting https://https://github.com/tellale/flitter-frontend
+This repository provides a backend API that interacts with a user interface that you will also find visiting https://github.com/tellale/flitter-frontend
 
 ## REQUIREMENTS
 
